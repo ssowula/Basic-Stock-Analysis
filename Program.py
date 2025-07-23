@@ -8,6 +8,7 @@ def main():
     basic_statistics(df)
     open_close_plot(df)
     calculate_daily_returns(df)
+    calculate_cumulative_returns(df)
 
 def data_fetch(ticker : str):
     data = yf.download(ticker,start='2025-06-01',end='2025-07-01')
@@ -38,6 +39,18 @@ def calculate_daily_returns(df: pd.DataFrame):
     daily_returns = ((df['Close'] - df['Open']) / df['Open'] * 100).round(2)
     df['Daily_returns'] = daily_returns
     print(df)
+
+def calculate_cumulative_returns(df: pd.DataFrame):
+    df['Cumulative_returns'] = (1+df['Daily_returns']/100).cumprod()
+    loss = 1 - df['Cumulative_returns'].iloc[-1]
+    print(f"Cumulative loss in June: {round(loss * 100, 2)}%")
+    plt.figure(figsize=(20, 10))
+    plt.plot(df['Cumulative_returns'])
+    plt.title('Cumulative returns')
+    plt.xlabel('Date')
+    plt.ylabel('Return')
+
+    plt.show()
 
 
 if __name__ == "__main__":
