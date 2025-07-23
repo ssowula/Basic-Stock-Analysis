@@ -7,6 +7,7 @@ def main():
     df = data_fetch("TSLA")
     basic_statistics(df)
     open_close_plot(df)
+    calculate_daily_returns(df)
 
 def data_fetch(ticker : str):
     data = yf.download(ticker,start='2025-06-01',end='2025-07-01')
@@ -32,6 +33,12 @@ def open_close_plot(df: pd.DataFrame):
     plt.grid(True)
     plt.tight_layout()
     plt.show()
+
+def calculate_daily_returns(df: pd.DataFrame):
+    daily_returns = ((df['Close'] - df['Open']) / df['Open'] * 100).round(2)
+    df['Daily_returns'] = daily_returns
+    print(df)
+
 
 if __name__ == "__main__":
     main()
