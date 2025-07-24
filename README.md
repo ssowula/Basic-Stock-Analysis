@@ -19,8 +19,8 @@ It analyzes selected companies, calculates returns and risk (VaR), and generates
 
 ## Analyzed Tickers
 
--`META` — full analysis (statistics, plots, risk)
--`TSLA`, `AAPL`, `GOOGL`, `MSFT` — analyzed for return comparison
+`META`  full analysis (statistics, plots, risk)  
+`TSLA`, `AAPL`, `GOOGL`, `MSFT` — analyzed for return comparison
 
 ## Requirements
 
@@ -40,5 +40,5 @@ python Program.py
 
 ## Notes
 
--Date range: **2024-01-01 to 2025-01-01**
+-Date range: **2024-01-01 to 2025-01-01**  
 -Only dates that are common across all tickers are included in cumulative return calculations
