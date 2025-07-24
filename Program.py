@@ -9,10 +9,12 @@ def main():
     open_close_plot(df)
     calculate_daily_returns(df)
     calculate_cumulative_returns(df)
+    value_at_risk(df, percentile=5.00)
 
 def data_fetch(ticker : str):
     data = yf.download(ticker,start='2025-06-01',end='2025-07-01')
     df=pd.DataFrame(data)
+    df=df.dropna()
     return df
 
 def basic_statistics(df: pd.DataFrame):
@@ -33,6 +35,7 @@ def open_close_plot(df: pd.DataFrame):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
+
     plt.show()
 
 def calculate_daily_returns(df: pd.DataFrame):
@@ -51,6 +54,15 @@ def calculate_cumulative_returns(df: pd.DataFrame):
     plt.ylabel('Return')
 
     plt.show()
+
+def value_at_risk(df: pd.DataFrame, percentile : float):
+    returns = df['Daily_returns'].dropna()
+    var_value = np.percentile(returns, percentile)
+
+    confidence_level = 100 - percentile
+
+    print(f"Value at Risk (VaR) at {confidence_level:.0f}% confidence level: {var_value:.2f}%")
+
 
 
 if __name__ == "__main__":
