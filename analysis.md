@@ -26,8 +26,8 @@ The companies included are: **TSLA, AAPL, GOOGL, MSFT**, with a separate in-dept
 **Insights:**
 - The histogram of daily returns for META shows a mostly normal distribution centered around 0%.
 - There are some strong negative outliers.
-- Historical VaR (95% confidence): **~ -2.59%**  
-- Parametric VaR (95% confidence): **~ -2.53%**
+- Historical VaR (95% confidence): ~ -2.59%  
+- Parametric VaR (95% confidence): ~ -2.53%
 
 Value at Risk (VaR) helps quantify the maximum expected loss over a given time period with a specific confidence level — it's a critical measure for financial risk management.
 
@@ -54,8 +54,8 @@ This means that with 95% confidence, we expect that META's daily loss will not e
 This analysis shows how major tech stocks performed over 2024.  
 Risk metrics like VaR help highlight the volatility of stocks like META, while the return chart visualizes the relative growth of each company.
 
-Most companies delivered positive returns, with the top performer being Apple (AAPL) at over 33% annual growth. 
-Other companies: 
+Most companies delivered positive returns, with the top performer being Apple (AAPL) at over 33% annual growth.   
+Other key performers: 
 - Google (GOOGL): ~13% gain
 - Meta (META): ~7% gain
 - Tesla (TSLA): ~5% gain
