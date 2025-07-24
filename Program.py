@@ -2,6 +2,7 @@ import yfinance as yf
 import pandas as pd
 from matplotlib import pyplot as plt
 import numpy as np
+import scipy.stats as st
 
 def main():
     df = data_fetch("TSLA")
@@ -9,7 +10,10 @@ def main():
     open_close_plot(df)
     calculate_daily_returns(df)
     calculate_cumulative_returns(df)
-    value_at_risk(df, percentile=5.00)
+    hist_var=historical_var(df, percentile=5.00)
+    param_var=parametric_var(df, confidence_level=0.95)
+
+    print(df)
 
 def data_fetch(ticker : str):
     data = yf.download(ticker,start='2025-06-01',end='2025-07-01')
@@ -41,7 +45,6 @@ def open_close_plot(df: pd.DataFrame):
 def calculate_daily_returns(df: pd.DataFrame):
     daily_returns = ((df['Close'] - df['Open']) / df['Open'] * 100).round(2)
     df['Daily_returns'] = daily_returns
-    print(df)
 
 def calculate_cumulative_returns(df: pd.DataFrame):
     df['Cumulative_returns'] = (1+df['Daily_returns']/100).cumprod()
@@ -55,14 +58,22 @@ def calculate_cumulative_returns(df: pd.DataFrame):
 
     plt.show()
 
-def value_at_risk(df: pd.DataFrame, percentile : float):
+def historical_var(df: pd.DataFrame, percentile : float):
     returns = df['Daily_returns'].dropna()
     var_value = np.percentile(returns, percentile)
 
     confidence_level = 100 - percentile
 
-    print(f"Value at Risk (VaR) at {confidence_level:.0f}% confidence level: {var_value:.2f}%")
+    print(f"Historical Value at Risk (VaR) at {confidence_level:.0f}% confidence level: {var_value:.2f}%")
+    return var_value
 
+def parametric_var(df:pd.DataFrame,confidence_level : float):
+    mu = df['Daily_returns'].mean()
+    sigma = df['Daily_returns'].std()
+    z=st.norm.ppf(1-confidence_level)
+    var_value = mu + z*sigma
+    print(f"Parametric Value at Risk (VaR) at {confidence_level*100:.0f}% confidence level: {var_value:.2f}%")
+    return var_value
 
 
 if __name__ == "__main__":
