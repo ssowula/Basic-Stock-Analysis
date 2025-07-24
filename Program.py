@@ -21,6 +21,7 @@ def main():
         calculate_daily_returns(df)
         cumulative = (1+df['Daily_returns']/100).cumprod()
         cumulative.name=ticker
+        print(f"{ticker}: {cumulative.iloc[-1]*100}")
 
         if returns_df.empty:
             returns_df = cumulative.to_frame()
@@ -32,7 +33,6 @@ def main():
     if not df_meta.empty:
         calculate_daily_returns(df_meta)
         basic_statistics(df_meta)
-        open_close_plot(df_meta)
         h_var = historical_var(df_meta, percentile=5.00)
         p_var = parametric_var(df_meta, confidence_level=0.95)
         var_plot(df_meta, h_var, p_var)
@@ -52,24 +52,8 @@ def data_fetch(ticker : str):
 
 def basic_statistics(df: pd.DataFrame):
     stats = df.describe()
+    print(df.kurtosis())
     print(stats)
-
-def open_close_plot(df: pd.DataFrame):
-    open_price = df['Open']
-    close_price = df['Close']
-    time = df.index
-
-    plt.figure(figsize=(20, 10))
-    plt.plot(time, open_price, label='Open', color='green')
-    plt.plot(time, close_price, label='Close', color='blue')
-    plt.title('Open and Close prices')
-    plt.xlabel('Date')
-    plt.ylabel('Price')
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-
-    plt.show()
 
 def calculate_daily_returns(df: pd.DataFrame):
     daily_returns = ((df['Close'] - df['Open']) / df['Open'] * 100).round(2)
@@ -113,7 +97,7 @@ def cumulative_returns_plot(returns_df : pd.DataFrame, tickers_tab):
     for ticker in tickers_tab:
         plt.plot(returns_df.index,returns_df[ticker],label=ticker)
 
-    plt.title("Comparison between cumulative returns between various companies")
+    plt.title("Cumulative Returns of Selected Companies in 2024")
     plt.xlabel("Date")
     plt.ylabel("Cumulative return")
     plt.legend()
