@@ -7,31 +7,41 @@ import scipy.stats as st
 tickers = ['TSLA','AAPL', 'GOOGL', 'MSFT']
 
 def main():
-    df_meta = data_fetch("META")
-    returns_df = cumulative_returns_dataframe(df_meta)
-
-    # META Analysis
-    basic_statistics(df_meta)
-    open_close_plot(df_meta)
-    calculate_daily_returns(df_meta)
-    calculate_cumulative_returns(df_meta, returns_df, "META")
-    h_var = historical_var(df_meta, percentile=5.00)
-    p_var = parametric_var(df_meta, confidence_level=0.95)
-    var_plot(df_meta, h_var, p_var)
+    all_tickers = tickers + ['META']
+    returns_df = pd.DataFrame()
 
     #Calculating data for all companies in list
-    for ticker in tickers:
+    for ticker in all_tickers:
         df=data_fetch(ticker)
+
+        if df.empty:
+            print(f"No data for {ticker}, skipping.")
+            continue
+
         calculate_daily_returns(df)
-        calculate_cumulative_returns(df, returns_df, ticker)
+        cumulative = (1+df['Daily_returns']/100).cumprod()
+        cumulative.name=ticker
+
+        if returns_df.empty:
+            returns_df = cumulative.to_frame()
+        else:
+            returns_df = returns_df.join(cumulative, how='inner')
+
+    # META Analysis
+    df_meta = data_fetch("META")
+    if not df_meta.empty:
+        calculate_daily_returns(df_meta)
+        basic_statistics(df_meta)
+        open_close_plot(df_meta)
+        h_var = historical_var(df_meta, percentile=5.00)
+        p_var = parametric_var(df_meta, confidence_level=0.95)
+        var_plot(df_meta, h_var, p_var)
+
+
 
     #Common plot for all companies
     cumulative_returns_plot(returns_df, tickers + ['META'])
 
-
-def cumulative_returns_dataframe(df):
-    returns_df=pd.DataFrame(index=df.index)
-    return returns_df
 
 def data_fetch(ticker : str):
     data = yf.download(ticker, start="2024-01-01", end="2025-01-01")
@@ -64,12 +74,6 @@ def open_close_plot(df: pd.DataFrame):
 def calculate_daily_returns(df: pd.DataFrame):
     daily_returns = ((df['Close'] - df['Open']) / df['Open'] * 100).round(2)
     df['Daily_returns'] = daily_returns
-
-def calculate_cumulative_returns(df : pd.DataFrame,returns_df : pd.DataFrame, ticker : str):
-    returns_df[ticker] = (1+df['Daily_returns']/100).cumprod()
-    loss = 1 - returns_df[ticker].iloc[-1]
-    print(f"{ticker}: Cumulative return (YTD): {round((returns_df[ticker].iloc[-1] - 1) * 100, 2)}%")
-
 
 def historical_var(df: pd.DataFrame, percentile : float):
     returns = df['Daily_returns'].dropna()
